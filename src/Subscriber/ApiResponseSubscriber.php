@@ -60,23 +60,35 @@ class ApiResponseSubscriber implements EventSubscriberInterface
     private $debug;
 
     /**
+     * If the returned error response is >= this HTTP code, then an event is logged.
+     *
+     * @see Response::HTTP_INTERNAL_SERVER_ERROR
+     *
+     * @var int
+     */
+    private $logTrigger;
+
+    /**
      * Constructor
      *
      * @param ApiResponseGenerator $responseGenerator
      * @param ApiConfigCompiler $configCompiler
      * @param LoggerInterface $logger
      * @param bool $debug
+     * @param int $logTrigger One of the Response::HTTP_INTERNAL_SERVER_ERROR values
      */
     public function __construct(
         ApiResponseGenerator $responseGenerator,
         ApiConfigCompiler $configCompiler,
         LoggerInterface $logger,
-        $debug
+        $debug,
+        $logTrigger = Response::HTTP_INTERNAL_SERVER_ERROR
     ) {
         $this->responseGenerator = $responseGenerator;
         $this->configCompiler = $configCompiler;
         $this->logger = $logger;
         $this->debug = $debug;
+        $this->logTrigger = $logTrigger;
     }
 
     /**
@@ -222,7 +234,7 @@ class ApiResponseSubscriber implements EventSubscriberInterface
 
         $event->setResponse($response);
 
-        if ($httpCode >= Response::HTTP_INTERNAL_SERVER_ERROR) {
+        if ($httpCode >= $this->logTrigger) {
             // Log exceptions that result in a 5xx server response.
             $this->logger->critical(
                 sprintf('API Exception %s: "%s" at %s line %s', get_class($exception), $exception->getMessage(), $exception->getFile(), $exception->getLine()),

@@ -20,6 +20,7 @@ services:
             - "@api_response.compiler.api_config"
             - "@logger"
             - %kernel.debug%
+            - %api_response.log_trigger%
 
     # Factory
     api_response.factory.serializer_adapter:

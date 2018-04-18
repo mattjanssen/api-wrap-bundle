@@ -6,6 +6,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * API Response Bundle Configuration
@@ -25,6 +26,14 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('api_response');
+
+        $rootNode
+            ->children()
+                ->integerNode('log_trigger')
+                    ->info('Minimum HTTP return status code which triggers response exception logging.')
+                    ->defaultValue(Response::HTTP_INTERNAL_SERVER_ERROR)
+                ->end()
+            ->end();
 
         $this->buildConfigNode(
             $rootNode
