@@ -27,6 +27,7 @@ class ApiResponseExtension extends ConfigurableExtension
         $defaults = isset($mergedConfig['defaults']) ? $mergedConfig['defaults'] : [];
 
         $paths = $mergedConfig['paths'];
+        $logTrigger = $mergedConfig['log_trigger'];
 
 //        $configCompiler = new ApiConfigCompiler($defaultConfig, $pathConfigs);
 //        $container->set('api_response.compiler.api_config', $configCompiler);
@@ -39,6 +40,7 @@ class ApiResponseExtension extends ConfigurableExtension
 
         $container->setParameter('api_response.defaults', $defaults);
         $container->setParameter('api_response.paths', $paths);
+        $container->setParameter('api_response.log_trigger', $logTrigger);
 
         // Load the rest of the services.
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
